@@ -9,19 +9,21 @@ import com.demo.view.MovieSearchPanel;
 
 public class Runner {
 
+	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 		
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			public void run() {
+				
 				JFrame.setDefaultLookAndFeelDecorated(true);
-				MovieSearchPanel mainFrame = new MovieSearchPanel();
+				MovieSearchPanel mainFrame = context.getBean(MovieSearchPanel.class);
+				
 				mainFrame.pack();
 				mainFrame.setVisible(true);
+				mainFrame.updateVisibleMovies();
 			}
 		});
-		
-		context.close();
 	}
 }

@@ -12,10 +12,12 @@ import javax.swing.JTextField;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import com.demo.DatabaseManager;
 import com.demo.model.MovieData;
 
+@Component
 public class MovieDetailsPanel extends JDialog {
 
 	private static final long serialVersionUID = -3556503447643319033L;
@@ -26,22 +28,22 @@ public class MovieDetailsPanel extends JDialog {
 	private JTextField yearField = new JTextField(20);
 	private JTextField scoreField = new JTextField(20);
 	
-	private MovieSearchPanel searchPanel;
 	private boolean editMode = false;
+	
+	@Autowired
+	private MovieSearchPanel searchPanel;
 	
 	@Autowired
 	@Qualifier("postgreManager")
 	private DatabaseManager dbManager;
-
-	public MovieDetailsPanel(MovieSearchPanel searchPanel) {
-		super(searchPanel, true);
-		this.searchPanel = searchPanel;
+	
+	public MovieDetailsPanel() {
 		setTitle("Movie Data");
 		setLayout(new GridBagLayout());
 		initialize();
 		pack();
 	}
-
+	
 	private void initialize() {
 		
 		GridBagConstraints gbc = new GridBagConstraints();

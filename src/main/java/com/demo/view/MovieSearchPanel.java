@@ -20,10 +20,12 @@ import javax.swing.event.DocumentListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import com.demo.DatabaseManager;
 import com.demo.model.MovieData;
 
+@Component
 public class MovieSearchPanel extends JFrame {
 
 	private static final long serialVersionUID = -1899109344737885692L;
@@ -31,21 +33,22 @@ public class MovieSearchPanel extends JFrame {
 	private JTextField searchBar = new JTextField("Search", 50);
 	private MovieTableModel tableModel = new MovieTableModel();
 	private JTable movieTable = new JTable(tableModel);
+	
+	@Autowired
 	private MovieDetailsPanel detailsPanel;
 	
 	@Autowired
-	@Qualifier("mongoManager")
+	@Qualifier("postgreManager")
 	private DatabaseManager dbManager;
 	
 	public MovieSearchPanel() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		detailsPanel = new MovieDetailsPanel(this);
 		setTitle("Movie Search Engine Demo");
 		setLayout(new GridBagLayout());
-		initiliaze();
+		initialize();
 	}
-
-	private void initiliaze() {
+	
+	private void initialize() {
 		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(10, 10, 0, 10);
@@ -101,7 +104,6 @@ public class MovieSearchPanel extends JFrame {
 		});
 		
 		scrollPane.requestFocus();
-		updateVisibleMovies();
 	}
 	
 	private JPanel createButtonsPanel() {
