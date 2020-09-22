@@ -2,9 +2,9 @@ package com.demo.postgre;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,8 +51,8 @@ public class PostgreManager implements DatabaseManager {
 						+ "year INT,"
 						+ "score REAL)";
 				
-				Statement statement = connection.get().createStatement();
-				statement.executeUpdate(query);
+				PreparedStatement statement = connection.get().prepareStatement(query);
+				statement.executeUpdate();
 				statement.close();
 				
 			} catch (SQLException e) {
@@ -81,12 +81,22 @@ public class PostgreManager implements DatabaseManager {
 		
 		if (connection.isPresent()) {
 			
-			String query = "INSERT INTO movies(name, director, length, year, score) VALUES(" + movie.toString() + ")";
 			try {
-				Statement statement = connection.get().createStatement();
-				statement.executeUpdate(query);
+				
+				String query = "INSERT INTO movies(name, director, length, year, score) VALUES(?,?,?,?,?)";
+				PreparedStatement statement = connection.get().prepareStatement(query);
+				
+				statement.setString(1, movie.getName());
+				statement.setString(2, movie.getDirector());
+				statement.setInt(3, movie.getLength());
+				statement.setInt(4, movie.getYear());
+				statement.setDouble(5, movie.getScore());
+				
+				statement.executeUpdate();
 				statement.close();
+				
 				LOGGER.log(Level.FINE, "PostgreSQL: " + movie.getName() + " successfully inserted");
+				
 			} catch (SQLException e) {
 				LOGGER.log(Level.SEVERE, "PostgreSQL: Failed to insert " + movie.getName(), e);
 			}
@@ -98,18 +108,22 @@ public class PostgreManager implements DatabaseManager {
 		
 		if (connection.isPresent()) {
 			
-			String query = "UPDATE movies"
-					+ " SET director = \'" + movie.getDirector() + "\'"
-					+ ", length = " + movie.getLength()
-					+ ", year = " + movie.getYear()
-					+ ", score = " + movie.getScore()
-					+ " WHERE name = \'" + movie.getName() + "\'";
-			
 			try {
-				Statement statement = connection.get().createStatement();
-				statement.executeUpdate(query);
+				
+				String query = "UPDATE movies SET director = ?, length = ?, year = ?, score = ? WHERE name = ?";
+				PreparedStatement statement = connection.get().prepareStatement(query);
+				
+				statement.setString(1, movie.getDirector());
+				statement.setInt(2, movie.getLength());
+				statement.setInt(3, movie.getYear());
+				statement.setDouble(4, movie.getScore());
+				statement.setString(5, movie.getName());
+				
+				statement.executeUpdate();
 				statement.close();
+				
 				LOGGER.log(Level.FINE, "PostgreSQL: " + movie.getName() + " successfully updated");
+				
 			} catch (SQLException e) {
 				LOGGER.log(Level.SEVERE, "PostgreSQL: Failed to update " + movie.getName(), e);
 			}
@@ -121,12 +135,17 @@ public class PostgreManager implements DatabaseManager {
 		
 		if (connection.isPresent()) {
 			
-			String query = "DELETE FROM movies WHERE name = \'" + movie.getName() + "\'";
+			String query = "DELETE FROM movies WHERE name = ?";
 			try {
-				Statement statement = connection.get().createStatement();
-				statement.executeUpdate(query);
+				
+				PreparedStatement statement = connection.get().prepareStatement(query);
+				statement.setString(1, movie.getName());
+				
+				statement.executeUpdate();
 				statement.close();
+				
 				LOGGER.log(Level.FINE, "PostgreSQL: " + movie.getName() + " successfully deleted");
+				
 			} catch (SQLException e) {
 				LOGGER.log(Level.SEVERE, "PostgreSQL: Failed to delete " + movie.getName(), e);
 			}
@@ -139,13 +158,14 @@ public class PostgreManager implements DatabaseManager {
 		List<MovieData> movieList = new ArrayList<MovieData>();
 		if (connection.isPresent()) {
 			
-			String query = "SELECT * FROM movies WHERE name LIKE \'%" + text + "%\'";
+			String query = "SELECT * FROM movies WHERE LOWER(name) LIKE LOWER(?)";
 			try {
 				
-				Statement statement = connection.get().createStatement();
+				PreparedStatement statement = connection.get().prepareStatement(query);
+				statement.setString(1, "%" + text + "%");
 				statement.setFetchSize(50);
 				
-				ResultSet resultSet = statement.executeQuery(query);
+				ResultSet resultSet = statement.executeQuery();
 				while (resultSet.next()) {
 					
 					String name = resultSet.getString(2);
@@ -180,10 +200,10 @@ public class PostgreManager implements DatabaseManager {
 			String query = "SELECT * FROM movies";
 			try {
 				
-				Statement statement = connection.get().createStatement();
+				PreparedStatement statement = connection.get().prepareStatement(query);
 				statement.setFetchSize(50);
 				
-				ResultSet resultSet = statement.executeQuery(query);
+				ResultSet resultSet = statement.executeQuery();
 				while (resultSet.next()) {
 					
 					String name = resultSet.getString(2);
