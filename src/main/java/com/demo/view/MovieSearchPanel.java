@@ -20,11 +20,13 @@ import javax.swing.event.DocumentListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.demo.DatabaseManager;
 import com.demo.model.MovieData;
 
+@Lazy
 @Component
 public class MovieSearchPanel extends JFrame {
 

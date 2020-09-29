@@ -11,6 +11,7 @@ import javax.annotation.PreDestroy;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.demo.DatabaseManager;
@@ -20,6 +21,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
+@Lazy
 @Component
 @Qualifier("mongoManager")
 public class MongoManager implements DatabaseManager {

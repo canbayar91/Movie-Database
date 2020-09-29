@@ -15,11 +15,13 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.demo.DatabaseManager;
 import com.demo.model.MovieData;
 
+@Lazy
 @Component
 @Qualifier("postgreManager")
 public class PostgreManager implements DatabaseManager {
@@ -28,7 +30,7 @@ public class PostgreManager implements DatabaseManager {
 	
 	private static final String URL = "jdbc:postgresql://localhost/movies";
 	private static final String USER = "postgres";
-	private static final String PASSWORD = "qwErty8lp";
+	private static final String PASSWORD = "postgres";
 	
 	private Optional<Connection> connection = Optional.empty();
 
